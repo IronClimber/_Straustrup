@@ -1,0 +1,21 @@
+#include <iostream>
+int getMax(int n1, int n2) {
+	if (n1>n2) return n1;
+	else return n2;
+}
+
+int getMin(int n1, int n2) {
+	if (n1<n2) return n1;
+	else return n2;
+}
+
+int main() {
+	int num1, num2;
+	while (std::cin>>num1>>num2) {
+		std::cout<<"Max value is: "
+						<<getMax(num1, num2)<<"\n";
+		std::cout<<"Min value is: "
+						<<getMin(num1, num2)<<"\n";
+		//std::cout<<num1<<" "<<num2<<"\n";	
+	}
+}
