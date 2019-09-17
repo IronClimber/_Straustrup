@@ -124,16 +124,21 @@ double get_value(string s) {
 }
 
 void set_value(string s, double d) {
-	for (Variable& v : var_table) {
-		if (v.name == s) {
-			if (v.is_const) {
-				error(s, " is const");	
-			}
-			v.value = d;
-			return;	
-		}
-	error("set: undefined variable ", s);
-	}
+        //cout << "set_value(" << s << ", " << d << ")" << endl;
+        for (Variable& v : var_table) {
+            //cout << "(" << v.name << ":" << s << "), ";
+            if (v.name == s) {
+                    //cout << "v.name == s" << endl;
+                    if (v.is_const) {
+                            //cout << "v is const" << endl;
+                            error(s, " is const");
+                    }
+                    v.value = d;
+                    //cout << "return" << endl;
+                    return;
+            }
+        }
+        error("set: undefined variable ", s);
 }
 
 bool is_declared(string var) {
