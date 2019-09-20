@@ -1,4 +1,4 @@
- // þ7.7 wrong input 1c4, 1z4 good. why?
+ // space separate numbers
 
 /*
 Simple calculator.
@@ -231,13 +231,23 @@ Token Token_stream::get() {
 		return buffer;
 	}
 	
+    //Edit this input to detect NewLine and then skip spaces
 	char ch;
-	cin >> ch; //cin skip space  symbols
-	
+    cin.get(ch);
+    while (isspace(ch)) {
+        if (ch == '\n') {
+            ch = print;
+            break;
+        }
+        cin.get(ch);
+    }
+    
+    //cout << "Switch: '" << ch << "'" << endl;
+    //-------------
 	switch (ch) {
-	case '\n':
-		cout << "print";
-		return Token(print);
+	//case '\n':
+	//	//cout << "print";
+	//	return Token(print);
 	case print:
 	case let:
 	case ',':
@@ -500,6 +510,7 @@ void calculate(void) {
 
 int main() {
 	try {
+        if (isspace('t')) cout << "True" << endl;
 		sym_table.define_const("pi", 3.1415926535);
 		sym_table.define_const("e", 2.7182818284);
 		calculate();
