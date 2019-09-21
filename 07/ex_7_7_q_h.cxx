@@ -65,7 +65,7 @@ using namespace std;
 //Command line operators
 const string quitkey = "quit";
 const string constkey = "const";
-const string helpkey = "h";
+const string helpkey = "help";
 
 //User interface
 const string prompt =  "> ";
@@ -223,7 +223,6 @@ class Token_stream {
 
 Token_stream ts;
 
-
 void clean_up_mess(void) {
 	/*while (true) {
 		Token t = ts.get();
@@ -304,7 +303,7 @@ Token Token_stream::get() {
 			if (s == quitkey) {
 				return Token(quit);	
 			}		
-            else if (s == "h" || s == "H") {
+            else if (s == helpkey) {
                 return Token(help);
             }
 			else if (s == "sqrt") { 
@@ -534,7 +533,6 @@ void calculate(void) {
 				ts.putback(t);
 				cout << result << statement() << "\n";
 			} 
-            //Something wrong with exeption. No prompt after Error
 			catch (exception& e) {
                 cout << "bu!" << endl;
 				cerr << e.what() << "\n";
