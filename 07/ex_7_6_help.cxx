@@ -63,23 +63,24 @@ Input from cin using Token_stream called ts
 using namespace std;
 
 //Command line operators
-const char quit = 'q';
-const char print = ';';
 const string quitkey = "quit";
 const string constkey = "const";
+const string helpkey = "h";
 
 //User interface
 const string prompt =  "> ";
 const string result =  "= ";
 
 //Token kind
-
+const char quit = 'q';
+const char print = ';';
 const char const_cmd = 'C';
 const char name = 'a';
 const char let = '#';
 const char number = '8'; 
 const char sqrt_f = 's';
-const char pow_f ='p';                      
+const char pow_f ='p';            
+const char help = 'h';          
 
 void error(string str) {
 	throw runtime_error("Error: " + str);
@@ -102,8 +103,16 @@ void keep_window_open(char sign) {
 }
 
 void print_help(void) {
+    cout << "------------HELP------------" << endl;
+    cout << prompt << " - is prompt to write expression" << endl;
+    cout << quitkey << " - quit program" << endl;
+    cout << print << " - finish expression" << endl;
+    cout << print << " or Enter - print result" << endl;
 	cout << "You may use standart math operations: +, -, *, /, %." << endl;
-	cout << "To create variable use # (#x = 3;)" << endl;
+    cout << "There are some function pow(x, n) and sqrt(x)" << endl;
+	cout << "To create variable use " << let << " (" << let << " x = 3" << print << ")" << endl;
+    cout << "To create const use " << constkey << " (" << constkey <<" x = 3" << print << ")" << endl;
+    cout << "-----------------------------" << endl;
 }
 
 /*-------------------Variable------------------------------------*/
@@ -223,6 +232,7 @@ void clean_up_mess(void) {
 	ts.ignore(print);
 }
 
+//Put Token to buffer
 void Token_stream::putback(Token t) {
 	if (full) error("putback(): Buffer is full."); 
 	buffer = t;
@@ -231,13 +241,19 @@ void Token_stream::putback(Token t) {
 
 Token Token_stream::get() {
 	//Read symbols from cin and make Token
-	if (full) {  //Check is Token in buffer
+	if (full) {  
+    //Check is Token in buffer
+    //If there are something, read from buffer
 		full = false;
 		return buffer;
 	}
 	
     //Edit this input to detect NewLine and then skip spaces
 	char ch;
+    //cin skip spaces and newlines
+    //use cin.get() to read spaces and newlines
+    //cin >> ch;
+    
     cin.get(ch);
     while (isspace(ch)) {
         if (ch == '\n') {
@@ -269,6 +285,7 @@ Token Token_stream::get() {
 	case '0': case '1': case '2': case '3': case '4': 
 	case '5': case '6': case '7': case '8': case '9': {
 		cin.putback(ch); //back number to the input  stream
+        //to read then full value
 		double val;
 		cin>>val; //read float point number
 		return Token{number, val}; 
@@ -282,10 +299,13 @@ Token Token_stream::get() {
 			}
 			cin.putback(ch);
 			//cin >> s;
-			
+			//string sl = tolower(s);
 			if (s == quitkey) {
 				return Token(quit);	
 			}		
+            else if (s == "h" || s == "H") {
+                return Token(help);
+            }
 			else if (s == "sqrt") { 
 				return Token(sqrt_f);
 			}
@@ -303,15 +323,15 @@ Token Token_stream::get() {
 
 void Token_stream::ignore(char c) {
 
-		if (full && buffer.kind == c) {
+	if (full && buffer.kind == c) {
 		full = false;
 		return;
 	}	
 	full = false;
 	
 	char ch = 0;
-	while(cin>>ch) {
-		if(ch==c) {
+	while(cin.get(ch)) {
+		if(ch==c || ch=='\n') {
 			return;
 		}	
 	}
@@ -494,16 +514,27 @@ double statement(void) {
 }
 
 void calculate(void) {
+        //While cin OK. All cin operations is fine.
 		while (cin) {
 			try {
 				cout << prompt;
 				Token t = ts.get();	
+                
 				while (t.kind == print) {t = ts.get();}
+
+                if (t.kind == help) {
+                    print_help();
+                    continue;
+                    //cout << prompt;
+                    //t = ts.get();
+                }
+
 				if (t.kind == quit) {return;}
 				ts.putback(t);
 				cout << result << statement() << "\n";
 			} 
 			catch (exception& e) {
+                cout << "bu!" << endl;
 				cerr << e.what() << "\n";
 				//cout << "return calculate; \n";
 				clean_up_mess();
@@ -515,7 +546,8 @@ void calculate(void) {
 
 int main() {
 	try {
-        if (isspace('t')) cout << "True" << endl;
+        //if (isspace('t')) cout << "True" << endl;
+        //print_help();
 		sym_table.define_const("pi", 3.1415926535);
 		sym_table.define_const("e", 2.7182818284);
 		calculate();
