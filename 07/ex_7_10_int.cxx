@@ -1,5 +1,14 @@
- // space separate numbers
-
+/* TODO
+   1) Remove prompt symbol with multiple output;
+        > 23; 232; 232;
+        = 23
+        > = 232             // this
+        > = 232             // and this
+        > 
+   2) Add trigonometric functions
+   3) Add equations solving
+   4) Input buffer
+*/
 /*
 Simple calculator.
 
@@ -60,7 +69,7 @@ Function
     pow ( Expression, int ( Expression ) )
 	
 Number:
-	Float
+	Int
 	
 Input from cin using Token_stream called ts
 */
@@ -89,7 +98,7 @@ const char let = '#';
 const char number = '8'; 
 const char sqrt_f = 's';
 const char pow_f ='p';            
-const char help = 'h';          
+const char help = 'h';
 
 void error(string str) {
 	throw runtime_error("Error: " + str);
@@ -101,6 +110,14 @@ void error(string str1, string str2) {
 
 void error(string str1, char ch) {
 	throw runtime_error(str1 + ch);
+}
+
+// run-time checked narrowing cast (type conversion). See ???.
+template<class R, class A> R narrow_cast(const A& a)
+{
+	R r = R(a);
+	if (A(r)!=a) error(string("info loss"));
+	return r;
 }
 
 void keep_window_open(char sign) {
@@ -128,33 +145,33 @@ void print_help(void) {
 class Variable {
 	public:
 		string name;
-		double value;	
+		int value;	
 		bool is_const;
 			
-		Variable(string n, double v) : name(n), value(v), is_const(false) { }
+		Variable(string n, int v) : name(n), value(v), is_const(false) { }
 		
-		Variable(string n, double v, bool  c) : name(n), value(v), is_const(c) { }
+		Variable(string n, int v, bool  c) : name(n), value(v), is_const(c) { }
 };
 
 /*-------------------SymbolTable------------------------------*/
 class Symbol_table {
 	public:
 		vector<Variable> var_table;
-		double get_value(string s);
-		void set_value(string s, double d);
+		int get_value(string s);
+		void set_value(string s, int d);
 		bool is_declared(string var);
-		double define_const(string var, double value);
-		double define_name(string var, double value);
+		int define_const(string var, int value);
+		int define_name(string var, int value);
 };
 
-double Symbol_table::get_value(string s) {
+int Symbol_table::get_value(string s) {
 	for (const Variable& v : var_table) {
 		if (v.name == s) { return v.value; }
 	}
 	error("get: undefined variable ", s);
 }
 
-void Symbol_table::set_value(string s, double d) {
+void Symbol_table::set_value(string s, int d) {
         //cout << "set_value(" << s << ", " << d << ")" << endl;
         for (Variable& v : var_table) {
             //cout << "(" << v.name << ":" << s << "), ";
@@ -181,7 +198,7 @@ bool Symbol_table::is_declared(string var) {
 	return false;	
 }
 
-double Symbol_table::define_const(string var, double value) {
+int Symbol_table::define_const(string var, int value) {
 	if (is_declared(var)) {
 		error(var, " this variable already exist.");
 	}
@@ -192,7 +209,7 @@ double Symbol_table::define_const(string var, double value) {
 	return value;
 }
 
-double Symbol_table::define_name(string var, double value) {
+int Symbol_table::define_name(string var, int value) {
 	if (is_declared(var)) { 
 		//error(var, " this variable already exist.");
 		set_value(var, value);
@@ -211,7 +228,7 @@ Symbol_table sym_table;
 class Token {
 	public:
 		char kind;
-		double value;
+		int value;
 		string name;
 		
 		Token() { }
@@ -266,7 +283,7 @@ Token Token_stream::get() {
     cin.get(ch);
     while (isspace(ch)) {
         if (ch == '\n') {
-            ch = print;
+            //ch = print;
             break;
         }
         cin.get(ch);
@@ -275,7 +292,7 @@ Token Token_stream::get() {
     //cout << "Switch: '" << ch << "'" << endl;
     //-------------
 	switch (ch) {
-	//case '\n':
+	case '\n':
 	//	//cout << "print";
 	//	return Token(print);
 	case print:
@@ -297,6 +314,15 @@ Token Token_stream::get() {
         //to read then full value
 		double val;
 		cin>>val; //read float point number
+        /*try {
+            val_int = narrow_cast<int>(val);
+        }
+		catch (exception& e) {
+                cout << "narrow_cast" << endl;
+				cerr << e.what() << "\n";
+				clean_up_mess();
+		} */
+        int val_int = narrow_cast<int>(val);
 		return Token{number, val}; 
 	}
 	default:
@@ -357,6 +383,7 @@ double primary() {
 	case '(':
 	{
 		double d = expression();
+        narrow_cast<int>(d);
 		t = ts.get();
 		if (t.kind != ')') {
 			error("It should be ')'.");
@@ -370,12 +397,12 @@ double primary() {
 			error("It should be '(' before sqrt.");
 		}
 		
-		double e = expression();
+		int e = narrow_cast<int>(expression());
 		if (e<0) {
 			error("sqrt expression should be >= 0");
 		}
 		double d = sqrt(e);
-		
+		narrow_cast<int>(d);
 		
 		t = ts.get();
 		if (t.kind != ')') {
@@ -390,21 +417,23 @@ double primary() {
 			error("It should be '(' after pow.");
 		}
 		double e = expression();
+        narrow_cast<int>(e);
 		t = ts.get();
 		if (t.kind != ',') {
-			error("Pow expect two args, separated by coma (double, int)");	
+			error("Pow expect two args, separated by coma (int, int)");	
 		}
-		double n = expression();
+		int n = narrow_cast<int>(expression());
 		if (n<0) {
 			error("Pow degree should be >= 0");
 		}
-		else if (n-int(n)!=0) {
+		/*else if (n-int(n)!=0) {
 			error("Pow should be integer");
-		}
+		}*/
 		double pow = 1;
 		for (int i = 0; i < n; ++i) {
-			pow *= e;	
+			pow = (pow*e);	
 		}
+        narrow_cast<int>(pow);
 		t = ts.get();
 		if (t.kind != ')') {
 			error("It should be ')'.");
@@ -434,30 +463,36 @@ double primary() {
 
 double term() {
 	double left = primary();
+    narrow_cast<int>(left);
 	Token t = ts.get();
 	while (true) {
 		switch (t.kind) {
 		case '*': 
-			left *= primary();
+			left = left*primary();
+            narrow_cast<int>(left);
 			t = ts.get();
 			break;	
 		case '/': 
 		{
 			double d = primary();
+            narrow_cast<int>(d);
 			if (d == 0)  {
 				error("Zero devision!");
 			}
-			left /= d;
+			left = left/d;
+            narrow_cast<int>(left);
 			t = ts.get();
 			break;
 		}
 		case '%': 
 		{
 			double d = primary();
+            narrow_cast<int>(d);
 			if (d == 0) {
 				error("Zero devision!");
 			}
 			left = fmod(left, d);
+            narrow_cast<int>(left);
 			t = ts.get();
 			break;	
 		}
@@ -470,15 +505,18 @@ double term() {
 
 double expression() {
 	double left = term();
+    narrow_cast<int>(left);
 	Token t = ts.get();
 	while (true) {
 		switch (t.kind) {
 			case '+':
-				left += term();
+				left = left + term();
+                narrow_cast<int>(left);
 				t = ts.get();
 				break;
 			case '-':
-				left -= term();
+				left = left - term();
+                narrow_cast<int>(left);
 				t = ts.get();
 				break;
 			default:
@@ -500,7 +538,8 @@ double declaration(char kind) {
 		error("Expecting '=' after variable ", var_name);
 	}
 	
-	double d = expression();
+	double d =expression();
+    narrow_cast<int>(d);
 	if (kind == const_cmd) {
 		sym_table.define_const(var_name, d);
 	}
@@ -518,34 +557,54 @@ double statement(void) {
 			return declaration(t.kind);
 		default:
 			ts.putback(t);
-			return expression();
+            double d = expression();
+            narrow_cast<int>(d);
+			return d;
 	}
 }
 
 void calculate(void) {
         //While cin OK. All cin operations is fine.
+        bool just_continue = false;
 		while (cin) {
 			try {
-				cout << prompt;
-				Token t = ts.get();	
-                
-				while (t.kind == print) {t = ts.get();}
+  
+				Token t = ts.get();
+
+                if (t.kind == '\n') {
+                    cout << prompt;
+                    t = ts.get();
+                }
+
+				while (t.kind == print) {
+                    t = ts.get();
+                    if (t.kind == '\n') {
+                        ts.putback(t);
+                        just_continue = true;
+                        break;
+                    }             
+                }
+
+                if (just_continue) {
+                    just_continue = false;
+                    continue;
+                }
 
                 if (t.kind == help) {
                     print_help();
                     continue;
-                    //cout << prompt;
-                    //t = ts.get();
                 }
 
-				if (t.kind == quit) {return;}
+				else if (t.kind == quit) {return;}
+                 
 				ts.putback(t);
 				cout << result << statement() << "\n";
+
+
 			} 
 			catch (exception& e) {
                 cout << "bu!" << endl;
 				cerr << e.what() << "\n";
-				//cout << "return calculate; \n";
 				clean_up_mess();
 			}
 		}
@@ -555,12 +614,10 @@ void calculate(void) {
 
 int main() {
 	try {
-        //if (isspace('t')) cout << "True" << endl;
-        //print_help();
-		sym_table.define_const("pi", 3.1415926535);
-		sym_table.define_const("e", 2.7182818284);
+		//sym_table.define_const("pi", 3.1415926535);
+		//sym_table.define_const("e", 2.7182818284);
+        cout << prompt;
 		calculate();
-		//cout << "return 0;\n";
 		keep_window_open('~'); 
 		return 0;
 	} 

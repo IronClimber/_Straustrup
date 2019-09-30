@@ -1,5 +1,14 @@
- // space separate numbers
-
+/* TODO
+   1) Remove prompt symbol with multiple output;
+        > 23; 232; 232;
+        = 23
+        > = 232             // this
+        > = 232             // and this
+        > 
+   2) Add trigonometric functions
+   3) Add equations solving
+   4) Input buffer
+*/
 /*
 Simple calculator.
 
@@ -89,7 +98,7 @@ const char let = '#';
 const char number = '8'; 
 const char sqrt_f = 's';
 const char pow_f ='p';            
-const char help = 'h';          
+const char help = 'h';
 
 void error(string str) {
 	throw runtime_error("Error: " + str);
@@ -266,7 +275,7 @@ Token Token_stream::get() {
     cin.get(ch);
     while (isspace(ch)) {
         if (ch == '\n') {
-            ch = print;
+            //ch = print;
             break;
         }
         cin.get(ch);
@@ -275,7 +284,7 @@ Token Token_stream::get() {
     //cout << "Switch: '" << ch << "'" << endl;
     //-------------
 	switch (ch) {
-	//case '\n':
+	case '\n':
 	//	//cout << "print";
 	//	return Token(print);
 	case print:
@@ -524,12 +533,31 @@ double statement(void) {
 
 void calculate(void) {
         //While cin OK. All cin operations is fine.
+        bool just_continue = false;
 		while (cin) {
 			try {
-				cout << prompt;
-				Token t = ts.get();	
-                
-				while (t.kind == print) {t = ts.get();}
+  
+				Token t = ts.get();
+                //cout << prompt;
+                if (t.kind == '\n') {
+                    cout << prompt;
+                    t = ts.get();
+                    //continue;	
+                }
+
+				while (t.kind == print /*|| t.kind == '\n'*/) {
+                    t = ts.get();
+                    if (t.kind == '\n') {
+                        ts.putback(t);
+                        just_continue = true;
+                        break;
+                    }             
+                }
+
+                if (just_continue) {
+                    just_continue = false;
+                    continue;
+                }
 
                 if (t.kind == help) {
                     print_help();
@@ -538,9 +566,12 @@ void calculate(void) {
                     //t = ts.get();
                 }
 
-				if (t.kind == quit) {return;}
+				else if (t.kind == quit) {return;}
+                 
 				ts.putback(t);
 				cout << result << statement() << "\n";
+
+
 			} 
 			catch (exception& e) {
                 cout << "bu!" << endl;
@@ -559,6 +590,7 @@ int main() {
         //print_help();
 		sym_table.define_const("pi", 3.1415926535);
 		sym_table.define_const("e", 2.7182818284);
+        cout << prompt;
 		calculate();
 		//cout << "return 0;\n";
 		keep_window_open('~'); 
