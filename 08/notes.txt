@@ -1,0 +1,9 @@
+1. Class should be little and simple.
+2. Return value kind of defining.
+3. Arguments can passed by value or by reference.
+4. Constant reference in argument useful mechanism.
+5. 325 page mistake in example 8.5.4? (In russian edition).
+6. There is swap function for any type in std library.
+7. Left value and right value. 
+8. Compiler generated temporary object for const reference.
+9. Explicit type conversion
