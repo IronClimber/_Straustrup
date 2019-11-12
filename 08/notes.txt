@@ -6,4 +6,9 @@
 6. There is swap function for any type in std library.
 7. Left value and right value. 
 8. Compiler generated temporary object for const reference.
-9. Explicit type conversion
+9. Explicit type conversion.
+10. Constexpr-functions simple as possible.
+11. To use extern variable we should define variable in global space or specific scope of variable in other file.
+12. Different last row in second task between russian and english version. But both repeat other row.ш
+13. Function activation record, stack of activation records - call stack.
+
