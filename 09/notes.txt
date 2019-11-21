@@ -1,0 +1,6 @@
+1. Class has interface (public) and realization (privat).
+2. All what is boring - error, mistakes
+3. List of initialization class.
+4. Operator overloading.
+5. m = (m==Dec) ? Jan : Month(int(m)+1) ;
+6. Modifying and Nonmodifying operations.
