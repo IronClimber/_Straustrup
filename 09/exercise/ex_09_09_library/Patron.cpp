@@ -15,7 +15,7 @@ ostream& operator<<(ostream& os, const Patron& patron) {
              <<patron.amount()<<")";
 }
 
-Patron get_patron(void) {
+Patron create_patron(void) {
     unsigned int id;        
     cout<<"ID: ";
     cin>>id;

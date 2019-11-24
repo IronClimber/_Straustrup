@@ -18,11 +18,12 @@ public:
     double amount() const { return amount_; }
     bool is_paid() const { return paid_; }
     void set_amount(double a) { amount_ = a; }
+    void pay() { paid_ = true; }
 };
 
 bool operator==(const Patron& a, const Patron& b);
 std::ostream& operator<<(std::ostream& os, const Patron& patron);
 
-Patron get_patron(void);
+Patron create_patron(void);
 
 #endif /* PATRON_H */

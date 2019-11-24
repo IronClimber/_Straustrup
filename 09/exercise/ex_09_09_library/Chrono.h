@@ -13,7 +13,7 @@ class Date {
 public:
     class Invalid { };
     Date(int y, Month m, int d);
-    Date();
+    Date(); //Should be current date
 
     //Nonmodifying operations
     int day() const { return d; }

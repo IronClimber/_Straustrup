@@ -131,7 +131,7 @@ ostream& operator<<(ostream& os, const Book& book) {
 
 }
 
-Book get_book(void) {
+Book create_book(void) {
     string isbn;        
     cout<<"ISBN: ";
     cin>>isbn;

@@ -39,6 +39,6 @@ bool operator==(const Book& a, const Book& b);
 bool operator!=(const Book& a, const Book& b);
 std::ostream& operator<<(std::ostream& os, const Book& book);
 
-Book get_book(void);
+Book create_book(void);
 
 #endif /* BOOK_H */

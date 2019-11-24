@@ -5,3 +5,4 @@
 5. m = (m==Dec) ? Jan : Month(int(m)+1) ;
 6. Modifying and Nonmodifying operations.
 7. Headers guards
+8. Debug mode using #define #ifdef #ifndef #endif
