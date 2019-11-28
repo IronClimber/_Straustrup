@@ -1,0 +1,5 @@
+1. 10.6 - bug in Ukrainian currency
+2. Ctrl+D - "end of file"
+3. Separating dialog from function
+4. map<int, string>
+5. ERRATRA: 10.6 s/int p : points/Point p : Points
