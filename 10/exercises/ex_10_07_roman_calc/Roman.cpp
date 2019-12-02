@@ -1,18 +1,12 @@
 #include <iostream>
 #include <vector>
 #include "Roman.h"
-
+#include "helper.h"
 
 //May be additional class Roman_digit?
 using namespace std;
 
-void error(string str) {
-    throw runtime_error(str);
-}
 
-void error(string str, char ch) {
-    throw runtime_error(str);
-}
 vector<char> roman_digits{'I','V','X','L','C','D','M'};
 vector<int> arabic{1,5,10,50,100,500,1000};
 
@@ -155,10 +149,39 @@ void Roman_int::set_value(int v) {
     value = v;
 }
 
+Roman_int& Roman_int::operator=(const Roman_int& a) {
+    value = a.as_int();
+    return *this;
+}
+
+Roman_int& Roman_int::operator*=(const Roman_int& a) {
+    value *= a.as_int();
+    return *this;
+}
+
+Roman_int& Roman_int::operator/=(const Roman_int& a) {
+    value /= a.as_int();
+    return *this;
+}
+
+Roman_int& Roman_int::operator+=(const Roman_int& a) {
+    value += a.as_int();
+    return *this;
+}
+
+Roman_int& Roman_int::operator-=(const Roman_int& a) {
+    value -= a.as_int();
+    return *this;
+}
+
 //How to catch errors?
 std::istream& operator>>(std::istream& is, Roman_int& ri) {
     string roman;
-    is >> roman;
+    char ch;
+    while (is >> ch) {
+        if (is_roman(ch)) { roman += ch; }
+        else { is.unget(); break;}
+    }
     ri.set_value(roman_to_int(roman));
     return is;
 }
@@ -166,3 +189,39 @@ std::istream& operator>>(std::istream& is, Roman_int& ri) {
 ostream& operator<<(ostream& os, const Roman_int& ri) {
     return os << int_to_roman(ri.as_int());
 }
+
+Roman_int operator+(const Roman_int& a, const Roman_int& b) {
+    return Roman_int(a.as_int()+b.as_int());
+}
+
+Roman_int operator-(const Roman_int& a, const Roman_int& b) {
+    return Roman_int(a.as_int()-b.as_int());
+}
+
+Roman_int operator/(const Roman_int& a, const Roman_int& b) {
+    return Roman_int(a.as_int()/b.as_int());
+}
+
+Roman_int operator*(const Roman_int& a, const Roman_int& b) {
+    return Roman_int(a.as_int()*b.as_int());
+}
+
+Roman_int operator%(const Roman_int& a, const Roman_int& b) {
+    return Roman_int(a.as_int()%b.as_int());
+}
+
+bool operator==(const Roman_int& a, const Roman_int& b) {
+    if (a.as_int()==b.as_int()) { return true; }
+    return false;
+}
+
+bool operator!=(const Roman_int& a, const Roman_int& b) {
+    if (a.as_int()!=b.as_int()) { return true; }
+    return false;
+}
+
+//But there are no minus values!
+Roman_int operator-(const Roman_int& a) {
+    return Roman_int(-a.as_int());
+}
+
