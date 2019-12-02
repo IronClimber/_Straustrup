@@ -2,4 +2,5 @@
 2. Ctrl+D - "end of file"
 3. Separating dialog from function
 4. map<int, string>
-5. ERRATRA: 10.6 s/int p : points/Point p : Points
+5. ERRATRA: 10.6 s/int p : points/Point p : Points (Already fixed. Where?)
+6. std::ios::clear(iostate state = goodbit) - only set flag good, eof, fail or bad
