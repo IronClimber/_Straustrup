@@ -75,26 +75,56 @@ Input from cin using Token_stream called ts
 */
 
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <vector>
 
-#include "token.h"
-#include "params.h"
-#include "handles.h"
-
 using namespace std;
 
-void print_help(void) {
-    cout << "------------HELP------------" << endl;
-    cout << prompt << " - is prompt to write expression" << endl;
-    cout << quitkey << " - quit program" << endl;
-    cout << print << " - finish expression" << endl;
-    cout << print << " or Enter - print result" << endl;
-	cout << "You may use standart math operations: +, -, *, /, %." << endl;
-    cout << "There are some function pow(x, n) and sqrt(x)" << endl;
-	cout << "To create variable use " << let << " (" << let << " x = 3" << print << ")" << endl;
-    cout << "To create const use " << constkey << " (" << constkey <<" x = 3" << print << ")" << endl;
-    cout << "-----------------------------" << endl;
+//Command line operators
+const string quitkey = "quit";
+const string constkey = "const";
+const string helpkey = "help";
+
+//User interface
+const string prompt =  "> ";
+const string result =  "= ";
+
+//Token kind
+const char quit = 'q';
+const char print = ';';
+const char const_cmd = 'C';
+const char name = 'a';
+const char let = '#';
+const char number = '8'; 
+const char sqrt_f = 's';
+const char pow_f ='p';            
+const char help = 'h';
+const char from_to = 'f';
+
+void error(string str) {
+	throw runtime_error("Error: " + str);
+}
+
+void error(string str1, string str2) {
+	throw runtime_error(str1 + str2);
+}
+
+void error(string str1, char ch) {
+	throw runtime_error(str1 + ch);
+}
+
+void print_help(ostream& os) {
+    os << "------------HELP------------" << endl;
+    os << prompt << " - is prompt to write expression" << endl;
+    os << quitkey << " - quit program" << endl;
+    os << print << " - finish expression" << endl;
+    os << print << " or Enter - print result" << endl;
+	os << "You may use standart math operations: +, -, *, /, %." << endl;
+    os << "There are some function pow(x, n) and sqrt(x)" << endl;
+	os << "To create variable use " << let << " (" << let << " x = 3" << print << ")" << endl;
+    os << "To create const use " << constkey << " (" << constkey <<" x = 3" << print << ")" << endl;
+    os << "-----------------------------" << endl;
 }
 
 /*-------------------Variable------------------------------------*/
@@ -128,17 +158,12 @@ double Symbol_table::get_value(string s) {
 }
 
 void Symbol_table::set_value(string s, double d) {
-        //cout << "set_value(" << s << ", " << d << ")" << endl;
         for (Variable& v : var_table) {
-            //cout << "(" << v.name << ":" << s << "), ";
             if (v.name == s) {
-                    //cout << "v.name == s" << endl;
                     if (v.is_const) {
-                            //cout << "v is const" << endl;
                             error(s, " is const");
                     }
                     v.value = d;
-                    //cout << "return" << endl;
                     return;
             }
         }
@@ -160,19 +185,16 @@ double Symbol_table::define_const(string var, double value) {
 	}
 	else {
 		var_table.push_back(Variable(var, value, true));
-		//cout << " Value defined! \n";
 	}
 	return value;
 }
 
 double Symbol_table::define_name(string var, double value) {
 	if (is_declared(var)) { 
-		//error(var, " this variable already exist.");
 		set_value(var, value);
 	}
 	else {
 		var_table.push_back(Variable(var, value));
-		//cout << " Value defined! \n";
 	}
 	return value;
 }
@@ -181,24 +203,142 @@ Symbol_table sym_table;
 
 /*----------------------Token_stream-------------------------*/
 
-Token_stream ts(cin);
+class Token {
+	public:
+		char kind;
+		double value;
+		string name;
+		
+		Token() { }
+		Token(char ch) : kind(ch) { }
+		Token(char ch, double val) : kind(ch), value(val) { }
+		Token(char ch, string n) : kind(ch), name(n) { }		
+};
+
+class Token_stream {
+	public:
+        void set_isbuf(streambuf* ib) {is.rdbuf(ib); }
+		Token get();
+		void putback(Token t);
+		void ignore(char c);
+	private:
+		bool full {false};
+		Token buffer;
+        istream& is {cin};
+};
+
+Token_stream ts;
 
 void clean_up_mess(void) {
-	/*while (true) {
-		Token t = ts.get();
-		if (t.kind == print) { return; }
-	}
-	*/
 	ts.ignore(print);
 }
 
+//Put Token to buffer
+void Token_stream::putback(Token t) {
+	if (full) error("putback(): Buffer is full."); 
+	buffer = t;
+	full = true;	
+}
+
+//iostream& is - need a lot of code formatting. How to save refference to istream in class?
+Token Token_stream::get() {
+	//Read symbols from cin and make Token
+	if (full) {  
+    //Check is Token in buffer
+    //If there are something, read from buffer
+		full = false;
+		return buffer;
+	}
+	
+    //Edit this input to detect NewLine and then skip spaces
+	char ch;
+    //use is.get() to read spaces and newlines
+    is.get(ch);
+    while (isspace(ch)) {
+        if (ch == '\n') {
+            break;
+        }
+        is.get(ch);
+    }
+    
+    //-------------
+	switch (ch) {
+	case '\n':
+	case print:
+	case let:
+	case ',':
+	case '=':
+	case '*':
+	case '/': 
+	case '+': 
+	case '-':
+	case '%':
+	case '(': 
+	case ')': //each symbol present itself
+		return Token{ch};
+	case '.':
+	case '0': case '1': case '2': case '3': case '4': 
+	case '5': case '6': case '7': case '8': case '9': {
+		is.putback(ch); //back number to the input  stream
+        //to read then full value
+		double val;
+		is>>val; //read float point number
+		return Token{number, val}; 
+	}
+	default:
+		if  (isalpha(ch) || ch == '_') {
+			string s;
+			s += ch;
+			while (is.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_')) {
+				s += ch;
+			}
+			is.putback(ch);
+			if (s == quitkey) {
+				return Token(quit);	
+			}		
+            else if (s == helpkey) {
+                return Token(help);
+            }
+			else if (s == "sqrt") { 
+				return Token(sqrt_f);
+			}
+			else if (s == "pow") {
+				return Token(pow_f);
+			}
+			else if (s == "const") {
+				return Token(const_cmd);
+			}
+            else if (s == "from") {
+                return Token(from_to);
+            }		
+			return Token(name, s);
+		}
+		error("Wrong token: ", ch);	
+	}	
+}
+
+void Token_stream::ignore(char c) {
+
+	if (full && buffer.kind == c) {
+		full = false;
+		return;
+	}	
+	full = false;
+	
+	char ch = 0;
+	while(is.get(ch)) {
+		if(ch==c || ch=='\n') {
+			return;
+		}	
+	}
+			
+}
 
 /*----------------------Grammary realization-------------*/
 double expression();
 
 double primary() {
 	Token t = ts.get();
-	//cout << "\'" <<t.kind<<"\'";
 	switch (t.kind) {
 	case '(':
 	{
@@ -356,6 +496,20 @@ double declaration(char kind) {
 	return d;
 }
 
+void calculate(istream& is, ostream& os);
+
+void calc_from(istream& is, ostream& os) {
+    string ifile, str, ofile;
+    is>>ifile>>str>>ofile;
+    if (str != "to") { return; }
+    ifstream ifs(ifile);
+    if (!ifs) { return; }
+    ofstream ofs(ofile);
+    if (!ofs) { return; }
+    calculate(ifs, ofs);
+    ts.set_isbuf(cin.rdbuf());
+}
+
 double statement(void) {
 	Token t = ts.get();
 	switch (t.kind) {
@@ -368,21 +522,20 @@ double statement(void) {
 	}
 }
 
-void calculate(void) {
-        //While cin OK. All cin operations is fine.
+void calculate(istream& is, ostream& os) {
+        //While is OK. All is operations is fine.
         bool just_continue = false;
-		while (cin) {
+        ts.set_isbuf(is.rdbuf());
+		while (is) {
 			try {
   
 				Token t = ts.get();
-                //cout << prompt;
                 if (t.kind == '\n') {
-                    cout << prompt;
+                    os << prompt;
                     t = ts.get();
-                    //continue;	
                 }
 
-				while (t.kind == print /*|| t.kind == '\n'*/) {
+				while (t.kind == print) {
                     t = ts.get();
                     if (t.kind == '\n') {
                         ts.putback(t);
@@ -393,27 +546,25 @@ void calculate(void) {
 
                 if (just_continue) {
                     just_continue = false;
-                    continue;
+                    continue; 
                 }
 
                 if (t.kind == help) {
-                    print_help();
+                    print_help(os);
                     continue;
-                    //cout << prompt;
-                    //t = ts.get();
+                }
+                else if (t.kind == from_to) {
+                    calc_from(is, os);
                 }
 
 				else if (t.kind == quit) {return;}
                  
 				ts.putback(t);
-				cout << result << statement() << "\n";
-
-
+				os << result << statement() << "\n";
 			} 
 			catch (exception& e) {
-                cout << "bu!" << endl;
+                os << "bu!" << endl;
 				cerr << e.what() << "\n";
-				//cout << "return calculate; \n";
 				clean_up_mess();
 			}
 		}
@@ -423,27 +574,14 @@ void calculate(void) {
 
 int main() {
 	try {
-        //if (isspace('t')) cout << "True" << endl;
-        //print_help();
-		sym_table.define_const("pi", 3.1415926535);
-		sym_table.define_const("e", 2.7182818284);
+		//sym_table.define_const("pi", 3.1415926535);
+		//sym_table.define_const("e", 2.7182818284);
         cout << prompt;
-		calculate();
-		//cout << "return 0;\n";
-		keep_window_open('~'); 
+		calculate(cin, cout);
 		return 0;
 	} 
-	/*
-		catch (exception &e) {
-		cout << "E!\n";
-		cerr << e.what() << "\n";
-		return 1;
-	}
-	*/
 	catch (...) {
 		cerr << "Exception! \n";
-		//cout << "return 2; \n";
-		keep_window_open('~'); 
 		return 2;
 	}
 }

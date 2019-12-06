@@ -4,3 +4,9 @@
 4. map<int, string>
 5. ERRATRA: 10.6 s/int p : points/Point p : Points (Already fixed. Where?)
 6. std::ios::clear(iostate state = goodbit) - only set flag good, eof, fail or bad
+7. __rhs -> right hand side
+8. && is a new reference operator defined in the C++11 standard. int&& a means "a" is an r-value reference. && is normally only used to declare a parameter of a function. And it only takes an r-value expression.
+9. std::move if compiller do not know that vatiable is rvalue
+10. is.rdbuf(ifs.rdbuf()) - solving of input stream changing
+11. to swap buffers correctly you need to save previous buffer (pointer)
+12. file closed automatically in the end of the block (scope)

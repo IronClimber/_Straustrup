@@ -1,0 +1,28 @@
+= 36
+> = -8
+> Wrong token: !
+> > Error: It should be ')'.
+> Error: Waiting fot primary expression.
+> > = -0.333333
+> Error: Waiting fot primary expression.
+> > Error: Waiting fot primary expression.
+> = 1
+> = 10
+> Error: Waiting fot primary expression.
+> Error: Zero devision!
+> get: undefined variable fddsf
+> get: undefined variable er23
+> > Error: Zero devision!
+> = 3
+> = -2
+> = -2
+> Error: Waiting fot primary expression.
+> = 1.23457e+15
+> Wrong token: '
+> > = 3
+> = 4
+> = 3
+= 3
+> = 1
+> Wrong token: 
+> 
