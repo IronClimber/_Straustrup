@@ -1,0 +1,4 @@
+1. Stream manipulators
+2. sstream
+3. Ctrl+D end of input
+
