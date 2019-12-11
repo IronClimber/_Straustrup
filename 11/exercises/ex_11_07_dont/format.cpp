@@ -45,6 +45,7 @@ int main() {
                 }
                 else { newline += ' '; }                
             }
+            //else if (line.substr(i, 4) = "n't ")
             else if (ch == 'n' && !shield) {
                 if (line[i+1] == '\'' && line[i+2] == 't' && isspace(line[i+3])) { 
                     if (line.substr(i-2, 2) == "do") { newline += " not"; }

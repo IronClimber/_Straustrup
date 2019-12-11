@@ -12,11 +12,13 @@ There are only two kinds of languages: languages that people complain about, and
 using namespace std;
 
 int main() {
+
     Punct_stream ps{cin};
     ps.whitespace(";:,.?!()\"{}<>/&$@#%^*|~");
     ps.case_sensitive(false);
 
     cout << "Please, type words." << endl;
+    
     vector<string> vs;
     for(string word; ps>>word;) { vs.push_back(word); }
     //cout << "End of get words" << endl;
