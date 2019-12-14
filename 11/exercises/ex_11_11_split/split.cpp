@@ -5,6 +5,13 @@
 
 using namespace std;
 
+string white = ",./?><|!@#$%^;:&*()_-+=";
+
+bool is_whitespace(char c) {
+    for(char w : white) { if (c==w) { return true; } }
+    return false;
+}
+
 vector<string> split(const string& s) {
 
     vector<string> vs;
@@ -23,14 +30,16 @@ vector<string> split(string& s, const string& w) {
     cout << "Split with whitespaces" << endl;
 
     vector<string> vs;
-    istringstream ss{s};
-    
-    //Something wrong with input stream like string stream
-    Punct_stream ps(ss);
-    ps.whitespace(w);
-    //ps.case_sensitive(false);
 
-    for (string substring; ps >> substring;) {
+    string str;
+    for (char ch : s) {
+        if (is_whitespace(ch)) { str += ' '; }
+        else { str += ch; }
+    }
+    
+    istringstream ss{str};
+   
+    for (string substring; ss >> substring;) {
         cout << substring << endl;
         vs.push_back(substring);
     }
