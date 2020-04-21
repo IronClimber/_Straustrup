@@ -6,4 +6,4 @@
 6. define Menu::attach in source file instead header
 7. избыток энтузиазма и недостаток вкуса.
 9. g++ -I ../lib `fltk-config --cxxflags` ../lib/Graph.o ../lib/GUI.o ../lib/Window.o -lfltk -lfltk_images `fltk-config --ldflags` -std=c++11 e_12_7_9.cpp 
-
+10. How to generate a lot of shapes? Can't use vector without operator=.
