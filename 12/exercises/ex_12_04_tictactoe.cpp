@@ -20,28 +20,83 @@ int main() {
     int row{0};
     int column{0};
 
-/*
-    vector<shared_ptr<Rectangle>> rects;
-    //Rectangle rect{Point{start_x+column*size, start_y+row*size}, size, size};
-    shared_ptr<Rectangle> p = make_shared<Rectangle> (Point{start_x+column*size, start_y+row*size}, size, size);
-    rects.push_back(p);
-    win.attach(rects[0]);*/
-    /*for (int i = 0; i < rows*columns; i++) {
+    /* --- HARDCODED --- */
+    /*
+    Rectangle rect0{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect0.set_fill_color(Color::white);
+    win.attach(rect0);
+
+    ++column;
+
+    Rectangle rect1{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect1.set_fill_color(Color::red);
+    win.attach(rect1);
+
+    ++column;
+
+    Rectangle rect2{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect2.set_fill_color(Color::white);
+    win.attach(rect2);
+
+    column=0;
+    ++row;
+
+    Rectangle rect3{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect3.set_fill_color(Color::red);
+    win.attach(rect3);
+
+    ++column;
+
+    Rectangle rect4{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect4.set_fill_color(Color::white);
+    win.attach(rect4);
+
+    ++column;
+
+    Rectangle rect5{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect5.set_fill_color(Color::red);
+    win.attach(rect5);
+
+    column=0;
+    ++row;
+
+    Rectangle rect6{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect6.set_fill_color(Color::white);
+    win.attach(rect6);
+
+    ++column;
+
+    Rectangle rect7{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect7.set_fill_color(Color::red);
+    win.attach(rect7);
+
+    ++column;
+
+    Rectangle rect8{Point{start_x+column*size, start_y+row*size}, size, size};
+    rect8.set_fill_color(Color::white);
+    win.attach(rect8);
+
+    column=0;
+    ++row;
+    */
+
+    Vector_ref<Rectangle> rects;
+    for (int i = 0; i < rows*columns; i++) {
         if (column >= columns) {
             column = 0;
             ++row;
         }
-        Rectangle rect{Point{start_x+column*size, start_y+row*size}, size, size};
+        rects.push_back(new Rectangle{Point{start_x+column*size, start_y+row*size}, size, size});
         
-        if (i%2==0) { 
-            rect.set_fill_color(Color::white);
+        if (i%2!=0) { 
+            rects[i].set_fill_color(Color::white);
         }
-        else rect.set_fill_color(Color::red);
-        rects.push_back(rect);
+        else rects[i].set_fill_color(Color::red);
+        
         win.attach(rects[i]);
         ++column;
     }
-*/
+
 
     win.wait_for_button();
 
