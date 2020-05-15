@@ -5,3 +5,4 @@ temp
 std_lib_facilities.h
 PPP-guide.pdf
 .vscode/
+*.o

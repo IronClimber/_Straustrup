@@ -1,0 +1,120 @@
+#ifndef LIB_13_H
+#define LIB_13_H
+
+#include "Graph.h"
+#include <iostream>
+
+namespace Graph_lib {
+
+
+struct Arc : Shape {
+
+    Arc(Point p, int ww, int hh, double s, double f) 
+        : w{ww}, h{hh}, a1{s}, a2{f}  {
+
+        add(Point{p.x-ww, p.y-hh});
+
+    }
+
+    void draw_lines() const;
+
+private:
+    int w;
+    int h;
+    double a1;
+    double a2;
+
+};
+
+struct Box : Shape {
+
+    Box(Point p, int ww, int hh, int rr) 
+        : w{ww}, h{hh}, r{rr} {
+
+        if (h<(r+r) || w<(r+r)) error("length or width less then double radius");
+
+        add(p);
+        add(Point{p.x,     p.y+r  });
+        add(Point{p.x,     p.y+h-r});
+        add(Point{p.x+r,   p.y+h  });
+        add(Point{p.x+w-r, p.y+h  });
+        add(Point{p.x+w,   p.y+h-r});
+        add(Point{p.x+w,   p.y+r  });
+        add(Point{p.x+w-r, p.y    });
+        add(Point{p.x+r,   p.y    });
+        add(Point{p.x+r,   p.y+r  });
+        add(Point{p.x+r,   p.y+h-r});
+        add(Point{p.x+w-r, p.y+h-r});
+        add(Point{p.x+w-r, p.y+r  });
+    }
+
+    void draw_lines() const;
+
+	int height() const { return h; }
+	int width() const { return w; }
+
+private:
+    int w;
+    int h;
+    int r;
+
+};
+
+struct Arrow : Shape {
+    Arrow(Point p1, Point p2);
+
+    void draw_lines() const;
+
+};
+
+//Or better use existing classes?
+/*
+struct TextBox : Shape {
+    TextBox(Point p, int ww, int hh, const string& s)
+            : w{ww}, h{hh}, lab{s} { add(p); }
+
+    void draw_lines() const;
+
+
+private:
+    string lab;
+    int w;
+    int h;
+
+};
+*/
+
+struct TextBox : Shape {
+    TextBox(Point p, int ww, int hh, const string& s);
+    
+    void draw_lines() const;
+
+    Point center() const { 
+        return Point{ point(0).x + int(box.width()/2), point(0).y + int(box.height()/2) }; 
+    }
+
+    void set_color(Color c);
+    void move(int dx, int dy);
+
+    Point n() const {
+        return Point{ point(0).x, point(0).y - int(box.height()/2)};
+    }
+
+    Point e() const;
+    Point s() const {
+        return Point{ point(0).x, point(0).y + int(box.height()/2) };
+    }
+    Point w() const;
+    Point ne() const;
+    Point nw() const;
+    Point se() const;
+    Point sw() const;
+
+    Text lab;
+    Box box;
+
+};
+
+}
+
+#endif // LIB_13_H
