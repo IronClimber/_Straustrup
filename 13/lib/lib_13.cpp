@@ -4,6 +4,10 @@
 namespace Graph_lib {
 
 
+/*void Regular_hexagon::draw_lines() const {
+    Closed_polyline::draw_lines();
+}*/
+
 void Arc::draw_lines() const {
     if (color().visibility()) {
         /* cout << point(0).x << " " << point(0).y<< " "
@@ -95,6 +99,29 @@ void TextBox::draw_lines() const {
     lab.draw_lines();   
 }
 
+RectBox::RectBox(Point p, int ww, int hh) : 
+    rect{p,ww,hh}, lab{Point{p.x+5,p.y+15}, ""} {
+        rect.set_fill_color(Color::white);
+        lab.set_label("EEEEEE");
+        add(p);
+}
 
+void RectBox::draw_lines() const {
+    rect.draw_lines();
+    lab.draw_lines();   
+}
+
+void RectBox::set_color(Color c)
+{   
+    rect.set_color(c);
+	//lab.set_color(c);
+}
+
+void RectBox::set_fill_color(uchar rr, uchar gg, uchar bb)
+{   
+    
+    rect.set_fill_color(fl_rgb_color(rr,gg,bb));
+	//lab.set_color(c);
+}
 
 }

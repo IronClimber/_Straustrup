@@ -6,6 +6,24 @@
 
 namespace Graph_lib {
 
+struct Regular_hexagon : Polygon {
+    
+    Regular_hexagon(Point p, int rr) : r{rr} {
+        add(Point{p.x-rr, p.y});
+        add(Point{p.x-int(rr/2),p.y+int(rr*0.866)});
+        add(Point{p.x+int(rr/2),p.y+int(rr*0.866)});
+        add(Point{p.x+rr, p.y});
+        add(Point{p.x+int(rr/2),p.y-int(rr*0.866)});
+        add(Point{p.x-int(rr/2),p.y-int(rr*0.866)});
+    }
+
+    //void draw_lines() const;
+
+private:
+    int r;    
+
+};
+
 
 struct Arc : Shape {
 
@@ -83,6 +101,16 @@ private:
 
 };
 */
+
+struct RectBox : Shape {
+    RectBox(Point p, int ww, int hh);
+    void draw_lines() const;
+    void set_color(Color c);
+    void set_fill_color(uchar rr, uchar gg, uchar bb);
+
+    Text lab;
+    Rectangle rect;
+};
 
 struct TextBox : Shape {
     TextBox(Point p, int ww, int hh, const string& s);
