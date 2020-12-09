@@ -12,8 +12,8 @@ int main() {
     Vector_ref<Regular_hexagon> puzzle;
     Point start_point{50,50};
     int radius{40};
-    int row{3};
-    int column{5};
+    int row{7};
+    int column{4};
     for (int i = 0; i < row; ++i) {
         int shift_x{0};
         if (i%2!=0) {shift_x = 1.5*radius;}

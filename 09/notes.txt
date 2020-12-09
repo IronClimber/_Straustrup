@@ -7,4 +7,5 @@
 7. Headers guards
 8. Debug mode using #define #ifdef #ifndef #endif
 9. long int instead long in russian version. (No such conversion like long int())
-10. static_cast<long long>(<some_value>); Type conversion.
+10. static_cast<long long>(<some_value>); Type conversion
+11. 9.4.3 - високосный.

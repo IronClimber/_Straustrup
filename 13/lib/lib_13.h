@@ -3,8 +3,28 @@
 
 #include "Graph.h"
 #include <iostream>
+#include <math.h>
 
 namespace Graph_lib {
+
+struct Regular_polygon : Polygon {
+
+    Regular_polygon(Point p, int nn, int rr) 
+                        : r{rr}, n{nn} {
+        double a = 0;
+        if (n >= 3) {
+            for (int i = 0; i < n; ++i) {
+              add(Point{p.x+int(r*cos(a)), p.y-int(r*sin(a))});
+              a += 2*M_PI/n;
+            }
+        }
+    }
+
+private:
+    int r;
+    int n;
+
+};
 
 struct Regular_hexagon : Polygon {
     
