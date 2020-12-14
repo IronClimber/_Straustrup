@@ -7,6 +7,35 @@
 
 namespace Graph_lib {
 
+struct Star : Polygon {
+
+    Star(Point p, int n, int r_out, int r_in);
+
+private:
+    int r_out;
+    int r_in;
+    int n;
+
+};
+
+struct Right_triangle : Polygon {
+
+    Right_triangle(Point p, int ww, int hh)
+                        : w{ww}, h{hh} {
+        add(p);
+        add(Point{p.x+w, p.y});
+        add(Point{p.x, p.y-h});
+    }
+
+private:
+    int w;
+    int h;
+};
+
+struct Poly : Polygon {
+    Poly(initializer_list<Point> lst);
+};
+
 struct Regular_polygon : Polygon {
 
     Regular_polygon(Point p, int nn, int rr) 
