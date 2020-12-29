@@ -11,8 +11,11 @@ int main() {
 
   Simple_window win{Point{100,100}, 600, 400, "Exercise 14.01 - Smiles"};
 
-  Smiley s{Point{300,200},70};
+  Smiley_hat s{Point{150,200},70};
   win.attach(s);
+
+  Frowny_hat f{Point{450,200},70};
+  win.attach(f);
 
   win.wait_for_button();
 

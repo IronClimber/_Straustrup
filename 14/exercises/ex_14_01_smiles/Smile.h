@@ -8,8 +8,22 @@ struct Smiley : Circle {
 
 };
 
-/*struct Frowny : Circle {
+struct Frowny : Circle {
  
-  void draw_lines() const override;
+  Frowny(Point p, int rr) : Circle{p, rr} { }
+  void draw_lines() const;
 
-};*/
+};
+
+struct Smiley_hat : Smiley {
+
+  using Smiley::Smiley;
+  void draw_lines() const;
+
+};
+
+struct Frowny_hat : Frowny {
+  using Frowny::Frowny;
+  void draw_lines() const;
+
+};
