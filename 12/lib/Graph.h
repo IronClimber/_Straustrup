@@ -210,7 +210,7 @@ private:
 //	Color fcolor;	// fill color; 0 means "no fill"
 };
 
-bool intersect(Point p1, Point p2, Point p3, Point p4);
+//bool intersect(Point p1, Point p2, Point p3, Point p4);
 
 
 struct Open_polyline : Shape {	// open sequence of lines

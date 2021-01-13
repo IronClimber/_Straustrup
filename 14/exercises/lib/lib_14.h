@@ -5,6 +5,8 @@
 
 namespace Graph_lib {
 
+bool line_segment_intersect(Point p1, Point p2, Point p3, Point p4, Point& intersection);
+
 struct Stripped_rectangle : Rectangle {
 
   using Rectangle::Rectangle;
@@ -15,6 +17,13 @@ struct Stripped_rectangle : Rectangle {
 struct Stripped_circle : Circle {
 
   using Circle::Circle;
+  void draw_lines() const;  
+
+};
+
+struct Stripped_closed_polyline : Closed_polyline {
+
+  using Closed_polyline::Closed_polyline;
   void draw_lines() const;  
 
 };
