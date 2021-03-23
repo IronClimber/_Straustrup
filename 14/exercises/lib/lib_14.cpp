@@ -144,4 +144,136 @@ void Stripped_closed_polyline::draw_lines() const {
 		fl_line(point(number_of_points()-1).x,point(number_of_points()-1).y,point(0).x,point(0).y);
 	}
 }
+
+Octagon::Octagon(Point p, int rr) : r{rr} {
+
+  	int x = p.x;
+    int y = p.y;
+    double angle_iterator = 0;
+
+	for (int i = 0; i < 8; ++i) {
+        angle_iterator += M_PI/4;
+        x = p.x + int(r*cos(angle_iterator));
+        y = p.y - int(r*sin(angle_iterator));
+        add(Point{x,y});
+    }
+}
+
+void Group::move(int dx, int dy) {
+	for (int i = 0; i < size(); ++i) {
+		vs[i].move(dx,dy);
+	}
+}
+
+void Group::draw_lines() const {
+	for (int i = 0; i < size(); ++i) {
+        //cout << i << endl;
+		vs[i].draw();
+	}
+}
+
+void Cell::draw_lines() const {
+    Rectangle::draw_lines();
+    c.draw();
+
+}
+
+void Cell::set_side(bool cs) {
+    cell_side = cs;
+    if (cs) { set_fill_color(Color::white); } //Make constant color?
+    else { set_fill_color(Color::black); }
+    //draw_lines???
+}
+
+void Cell::set_checker(int chh) {
+    ch.set(chh);
+    switch(chh) {
+	case Checker::none:
+		c.set_fill_color(Color::invisible);
+		c.set_color(Color::invisible);
+        break;
+    case Checker::light:
+    	c.set_fill_color(Color::visible); 
+		c.set_color(Color::visible);
+        c.set_fill_color(Color::white);
+        c.set_color(Color::black);
+ 		break;
+    case Checker::dark:
+    	c.set_fill_color(Color::visible); 
+		c.set_color(Color::visible);
+        c.set_fill_color(Color::black);
+        c.set_color(Color::white);
+        break;
+    default:
+		//c.set_fill_color(Color::invisible);
+		//c.set_color(Color::invisible);
+        break;
+    }
+}
+
+
+Cell::Cell(Point p, int s, bool cs) : size{s}, cell_side{cs}, Rectangle{p,s,s} { 
+    //using Rectangle::Rectangle(p,s,s);
+    int delta = 4;
+    set_side(cs);
+    c.move(p.x+delta+1, p.y+delta+1);
+    c.set_radius(int(s/2)-delta);
+	set_checker(Checker::none);
+}
+
+Chessboard::Chessboard(Point p, int s) : size{s} {
+    add(p);
+    double cell_size = double (s)/8.0;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            bool side{true};
+	        if ((i+j)%2) { side = false; }
+            board.add(new Cell{Point{int(p.x+i*cell_size),
+									 int(p.y+j*cell_size)},
+									 int(cell_size), 
+                                     side});
+	  	}
+    }
+
+    vector<string> numbers{"8", "7", "6", "5", "4", "3", "2", "1"};
+
+    for (int i = 0; i < 8; ++i) {
+        board.add(new Text{Point{p.x-int(cell_size*0.5), p.y+int(cell_size)*i+int(cell_size*0.75)},numbers[i]});
+	}
+
+    vector<string> letters{"A", "B", "C", "D", "E", "F", "G", "H"};
+
+    for (int i = 0; i < 8; ++i) {
+        board.add(new Text{Point{p.x+int(cell_size)*i+int(cell_size*0.25), p.y-int(cell_size*0.2)},letters[i]});
+	}
+    
+}
+
+void Chessboard::draw_lines() const {
+    board.draw();
+}
+
+void Chessboard::reset() {
+    for (int i = 0; i < 64; ++i) {
+        change(static_cast<Cell_num>(i), Checker::none);
+	}
+}
+
+void Chessboard::start() {
+    reset();
+    vector<Cell_num> dark_checkers{B8, D8, F8, H8, A7, C7, E7, G7, B6, D6, F6, H6};
+    vector<Cell_num> light_checkers{A3, C3, E3, G3, B2, D2, F2, H2, A1, C1, E1, G1};
+    for (int i = 0; i < dark_checkers.size(); ++i) {
+		change(dark_checkers[i], Checker::dark);
+    }
+    for (int i = 0; i < light_checkers.size(); ++i) {
+		change(light_checkers[i], Checker::light);
+    }
+}
+
+void Chessboard::change(int c, int ct) {
+	Cell* cell = board[c]; //System error. This is impossible.
+    cell->set_checker(ct);
+}
+
 }
