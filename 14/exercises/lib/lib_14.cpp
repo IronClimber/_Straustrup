@@ -211,6 +211,10 @@ void Cell::set_checker(int chh) {
     }
 }
 
+void Cell::move(int dx, int dy) {
+    Rectangle::move(dx, dy);
+    c.move(dx, dy);
+}
 
 Cell::Cell(Point p, int s, bool cs) : size{s}, cell_side{cs}, Rectangle{p,s,s} { 
     //using Rectangle::Rectangle(p,s,s);
@@ -221,17 +225,19 @@ Cell::Cell(Point p, int s, bool cs) : size{s}, cell_side{cs}, Rectangle{p,s,s} {
 	set_checker(Checker::none);
 }
 
+
 Chessboard::Chessboard(Point p, int s) : size{s} {
     add(p);
     double cell_size = double (s)/8.0;
     for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
+        for (int j = 7; j >= 0; --j) {
             bool side{true};
 	        if ((i+j)%2) { side = false; }
-            board.add(new Cell{Point{int(p.x+i*cell_size),
+			cells.push_back(new Cell{Point{int(p.x+i*cell_size),
 									 int(p.y+j*cell_size)},
 									 int(cell_size), 
                                      side});
+            board.add(cells[cells.size()-1]);
 	  	}
     }
 
@@ -259,6 +265,10 @@ void Chessboard::reset() {
 	}
 }
 
+void Chessboard::move(int dx, int dy) {
+	board.move(dx,dy);
+}
+
 void Chessboard::start() {
     reset();
     vector<Cell_num> dark_checkers{B8, D8, F8, H8, A7, C7, E7, G7, B6, D6, F6, H6};
@@ -272,8 +282,24 @@ void Chessboard::start() {
 }
 
 void Chessboard::change(int c, int ct) {
-	Cell* cell = board[c]; //System error. This is impossible.
-    cell->set_checker(ct);
+    cells[c].set_checker(ct);
+}
+
+bool Chessboard::step(int c1, int c2) {
+	if(cells[c1].checker() != Checker::none) {
+        if(cells[c2].checker() == Checker::none) {
+           	if(cells[c1].checker() == Checker::dark) {
+  				change(c2, Checker::dark);
+            }
+			else {
+				change(c2, Checker::light);
+			}
+			change(c1, Checker::none);
+			return true;
+        }
+  		return false;
+    }
+    return false;
 }
 
 }

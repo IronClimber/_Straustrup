@@ -85,8 +85,9 @@ struct Cell : Rectangle {
   void set_side(bool cs);
   void set_checker(int chh);
   bool side() const { return cell_side; }
-  Checker checker() const { return ch.get(); }
+  int checker() const { return ch.get(); }
   void draw_lines() const;
+  void move(int dx, int dy);
   
 
 private:
@@ -99,15 +100,17 @@ private:
 
 struct Chessboard : Shape {
   Chessboard(Point p, int s);
-  bool step(Cell_num c1, Cell_num c2);
+  bool step(int c1, int c2);
   void change(int c, int ct);
   void reset();
   void start();
   void draw_lines() const;
+  void move(int dx, int dy);
   
 private:
   int size;
   Group board;
+  Vector_ref<Cell> cells;
   
 };
 

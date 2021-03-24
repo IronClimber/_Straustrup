@@ -104,12 +104,16 @@ int main() {
   win.wait_for_button();
   cb.start();
   win.wait_for_button();
-  cb.reset();
-  cb.move(100,200);
+  cb.move(220,0);
   win.wait_for_button();
-  cb.start();
+  cb.step(A3, B4);
   win.wait_for_button();
-
-
+  cb.step(B6, A5);
+  win.wait_for_button();
+  cb.step(B4, C5);
+  win.wait_for_button();
+  cb.step(D6, B4);
+  cb.change(C5, Checker::none);
+  win.wait_for_button();
   return 0;
 }
