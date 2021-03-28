@@ -12,6 +12,10 @@ void Shape::draw_lines() const
 			fl_line(points[i-1].x,points[i-1].y,points[i].x,points[i].y);
 }
 
+Shape::Shape(initializer_list<Point> lst) {
+    for (Point p : lst) { add(p); }
+}
+
 void Shape::draw() const
 {
 	Fl_Color oldc = fl_color();
