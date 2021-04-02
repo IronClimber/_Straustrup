@@ -15,7 +15,7 @@ int main() {
 
   Simple_window win{Point{100,100}, 800, 600, "Exercise 14.11 - Binary tree"};
 
-  Binary_tree bt{Point{400,50}, 4};
+  Binary_tree bt{Point{400,50}, 6};
   win.attach(bt);
   win.wait_for_button();
 
