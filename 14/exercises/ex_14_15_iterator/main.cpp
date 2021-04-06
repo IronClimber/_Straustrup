@@ -17,13 +17,11 @@ void print(Iterator& it) {
 int main() {
 
   std::vector<double> vd{1.2,2.3,3.4,4.5,5.6,6.7};
-  //std::vector<double> vd{};
   Vector_iterator vi{vd};
   print(vi);
 
   std::list<double> ld {7.6,6.5,5.4,4.3,3.2,2.1,1.0};
   List_iterator li{ld};
-  //li.print();
   print(li);
 
   return 0;

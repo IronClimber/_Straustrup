@@ -105,7 +105,7 @@ public:
 	void push_back(T* p) { v.push_back(p); owned.push_back(p); }
 
 	// ???void erase(???)
-
+    void clear() { v.clear(); owned.clear(); }
 	T& operator[](int i) { return *v[i]; }
 	const T& operator[](int i) const { return *v[i]; }
 	int size() const { return v.size(); }

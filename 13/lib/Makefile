@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-std=c++11 -c
-INCLUDES=-I../../../12/lib 
+INCLUDES=-I../../12/lib 
 
 all: lib_13.o
 

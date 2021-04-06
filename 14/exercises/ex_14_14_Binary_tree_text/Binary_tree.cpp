@@ -23,9 +23,8 @@ void Node::move(int dx, int dy) {
 }
 
 Binary_tree::Binary_tree(Point p, int l) {
-	set_level(l);
     add(p);
-	create_graph(p,l);
+	set_level(l);
 }
 
 void Binary_tree::move(int dx, int dy) {
@@ -61,6 +60,7 @@ string get_label(int l, int p, int c) {
 
 void Binary_tree::create_graph(Point p, int l) {
 
+    reset();
 	if (level > 0) {
 
 		int size{10};
