@@ -167,6 +167,7 @@ private:
 struct Function : Shape {
 	// the function parameters are not stored
 	Function(Fct f, double r1, double r2, Point orig, int count = 100, double xscale = 25, double yscale = 25);
+	Function() { }
 	//Function(Point orig, Fct f, double r1, double r2, int count, double xscale = 1, double yscale = 1);	
 };
 
